@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const config = require('./utils/config');
+const userRoutes = require('./routes/users');
+const errorHandler = require('./middlewares/error-handler');
 
 const { PORT, MONGODB_URI } = config;
 
@@ -15,9 +17,15 @@ mongoose
     process.exit(1);
   });
 
+app.use(express.json());
+
 app.get('/', (req, res) => {
   res.send('News Explorer API no ar!');
 });
+
+app.use('/', userRoutes);
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
