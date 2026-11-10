@@ -49,3 +49,7 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 };
+module.exports.getCurrentUser = (req, res, next) => {
+  const { name, email } = req.user;
+  res.send({ name, email });
+};
