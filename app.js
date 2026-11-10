@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 
 const { errors } = require('celebrate');
+const cors = require('cors');
 const config = require('./utils/config');
 const userRoutes = require('./routes/users');
 const errorHandler = require('./middlewares/error-handler');
@@ -21,7 +22,23 @@ mongoose
 
 app.use(express.json());
 
-app.use(express.json());
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://news-explorer-frontend-gamma.vercel.app',
+];
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+      callback(new Error('Origem não permitida pelo CORS'));
+    },
+  }),
+);
+
 app.use(requestLogger);
 
 app.get('/', (req, res) => {
