@@ -7,6 +7,6 @@
   "rules": {
     "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
     "camelcase": ["error", { "allow": ["_id"] }],
-    "no-console": ["error", { "allow": ["log"] }],
+    "no-console": ["error", { "allow": ["log", "error"] }],
   },
 }
