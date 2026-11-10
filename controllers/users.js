@@ -1,6 +1,9 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ConflictError = require('../errors/conflict-error');
+const UnauthorizedError = require('../errors/unauthorized-error');
+const { JWT_SECRET } = require('../utils/config');
 
 const SALT_ROUNDS = 10;
 
@@ -18,4 +21,31 @@ module.exports.createUser = (req, res, next) => {
       }
       next(err);
     });
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    next(new UnauthorizedError('E-mail e senha são obrigatórios'));
+    return;
+  }
+
+  User.findOne({ email })
+    .select('+password')
+    .then((user) => {
+      if (!user) {
+        throw new UnauthorizedError('E-mail ou senha incorretos');
+      }
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          throw new UnauthorizedError('E-mail ou senha incorretos');
+        }
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+          expiresIn: '7d',
+        });
+        res.send({ token });
+      });
+    })
+    .catch(next);
 };
