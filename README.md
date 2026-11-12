@@ -1,6 +1,6 @@
 # News Explorer — Back-end
 
-API do projeto final News Explorer da TripleTen. O back-end oferece cadastro e autenticação de usuários, acesso protegido por JWT, validação de dados, logs e conexão com MongoDB Atlas.
+API do projeto final News Explorer da TripleTen. O back-end oferece cadastro e autenticação de usuários, gerenciamento de artigos salvos, acesso protegido por JWT, validação de dados, logs e conexão com MongoDB Atlas.
 
 ## Tecnologias
 
@@ -18,7 +18,9 @@ API do projeto final News Explorer da TripleTen. O back-end oferece cadastro e a
 - Cadastro de usuários com senha armazenada em hash.
 - Login com emissão de token JWT.
 - Rota protegida para obter os dados do usuário autenticado.
-- Validação dos dados de cadastro e login.
+- Listagem dos artigos salvos do usuário autenticado.
+- Criação e exclusão de artigos salvos, com exclusão permitida apenas ao dono.
+- Validação dos dados de cadastro, login e artigos.
 - Tratamento centralizado de erros.
 - Registro de requisições e erros.
 - CORS configurado para o front-end local e o domínio publicado.
@@ -30,6 +32,7 @@ API do projeto final News Explorer da TripleTen. O back-end oferece cadastro e a
 - Login: `POST /signin`
 - Cadastro: `POST /signup`
 - Usuário autenticado: `GET /users/me` (requer token Bearer)
+- Artigos salvos: `GET /articles`, `POST /articles` e `DELETE /articles/:articleId` (requerem token Bearer)
 
 ## Executar localmente
 
@@ -111,6 +114,32 @@ Authorization: Bearer <token>
 ```
 
 Sem token válido, a API responde com `401 Unauthorized`.
+
+### `GET /articles`
+
+Retorna todos os artigos salvos pelo usuário autenticado. Requer token Bearer.
+
+### `POST /articles`
+
+Salva um artigo para o usuário autenticado. O corpo deve incluir `keyword`, `title`, `text`, `date`, `source`, `link` e `image`; `link` e `image` devem ser URLs válidas. Em caso de sucesso, retorna HTTP 201 com o artigo criado.
+
+Exemplo:
+
+```json
+{
+  "keyword": "tecnologia",
+  "title": "Título do artigo",
+  "text": "Texto do artigo",
+  "date": "2026-11-12",
+  "source": "https://example.com",
+  "link": "https://example.com/artigo",
+  "image": "https://example.com/imagem.jpg"
+}
+```
+
+### `DELETE /articles/:articleId`
+
+Exclui um artigo salvo pelo `_id`. Requer token Bearer e só é permitido ao dono do artigo: id inválido retorna HTTP 400, artigo inexistente HTTP 404 e artigo de outro usuário HTTP 403.
 
 ## Logs
 
