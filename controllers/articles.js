@@ -29,6 +29,7 @@ module.exports.createArticle = (req, res, next) => {
 
 module.exports.deleteArticle = (req, res, next) => {
   Article.findById(req.params.articleId)
+    .select('+owner')
     .then((article) => {
       if (!article) {
         throw new NotFoundError('Artigo não encontrado');
