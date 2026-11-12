@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const { JWT_SECRET } = require('../utils/config');
 
@@ -19,14 +18,7 @@ module.exports = (req, res, next) => {
       return;
     }
 
-    User.findById(payload._id)
-      .then((user) => {
-        if (!user) {
-          throw new UnauthorizedError('Usuário não encontrado');
-        }
-        req.user = user;
-        next();
-      })
-      .catch(next);
+    req.user = { _id: payload._id };
+    next();
   });
 };
