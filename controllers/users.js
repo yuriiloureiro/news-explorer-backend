@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const ConflictError = require('../errors/conflict-error');
+const NotFoundError = require('../errors/not-found-error');
 const UnauthorizedError = require('../errors/unauthorized-error');
 const { JWT_SECRET } = require('../utils/config');
 
@@ -49,7 +50,14 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 };
+
 module.exports.getCurrentUser = (req, res, next) => {
-  const { name, email } = req.user;
-  res.send({ name, email });
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Usuário não encontrado');
+      }
+      res.send({ name: user.name, email: user.email });
+    })
+    .catch(next);
 };
