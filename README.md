@@ -151,7 +151,7 @@ O back-end está hospedado no Render e usa o MongoDB Atlas. As variáveis `MONGO
 
 ## Front-end
 
-O front-end do projeto está publicado em https://news-explorer-frontend-gamma.vercel.app/. A integração do front-end com esta API própria está pendente.
+O front-end do projeto está publicado em News Explorer (https://news-explorer-frontend-gamma.vercel.app/) e integrado a esta API para cadastro, login, consulta do usuário autenticado e gerenciamento de artigos salvos. As rotas protegidas da API exigem autenticação por token JWT.
 
 ## Autor
 
